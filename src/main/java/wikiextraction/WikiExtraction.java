@@ -17,20 +17,20 @@ import com.google.gson.JsonParser;
 public class WikiExtraction {
 public static void main(String[] args) throws IOException{
 		
-		/*
+//		/*
 		Set<String> categorie = getCategories("Nanoindentation");
 		for(String s : categorie){
 			System.out.println(s);
 		}
-		*/
+//		*/
 
 		
-		/*
+//		/*
 		Set<String> links = getLinks("nanoindentation");
 		for(String s : links){
 			System.out.println(s);
 		}
-		*/
+//		*/
 //		/*
 		Set<String> linkshere = getLinksHere("nanoindentation");
 		for(String s : linkshere){
@@ -39,16 +39,16 @@ public static void main(String[] args) throws IOException{
 			}
 		}
 //		*/
-		/*
+//		/*
 		Set<String> categoryMembers = getCategoryMembers("hardness_tests");
 		for(String s : categoryMembers){
 			System.out.println(s);
 		}
-		*/
-		/*
+//		*/
+//		/*
 		String extract = getExtract("nanoindentation");
 		System.out.println(extract);
-		*/
+//		*/
 	}
 	
 	/*
@@ -77,7 +77,7 @@ public static void main(String[] args) throws IOException{
         JsonElement pages = jsonElement.getAsJsonObject().get("query").getAsJsonObject().get("pages");
 		JsonElement elem = getJsonElement("prop", "titles",page+"&exintro=&explaintext=", "extracts", "");
 		String extract = elem.getAsJsonObject().get("extract").toString();
-		extract = extract.substring(1, extract.length()-5);
+		extract = extract.substring(1, extract.length()-1);
 		return extract;
 	}
 	private static Set<String> getCategories(String page) throws IOException{
