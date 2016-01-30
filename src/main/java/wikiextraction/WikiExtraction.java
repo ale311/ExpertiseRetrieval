@@ -17,36 +17,46 @@ import com.google.gson.JsonParser;
 public class WikiExtraction {
 public static void main(String[] args) throws IOException{
 		
+		/*
 		Set<String> categorie = getCategories("Nanoindentation");
 		for(String s : categorie){
 			System.out.println(s);
 		}
+		*/
+
 		
+		/*
 		Set<String> links = getLinks("nanoindentation");
 		for(String s : links){
 			System.out.println(s);
 		}
-		
+		*/
+//		/*
 		Set<String> linkshere = getLinksHere("nanoindentation");
 		for(String s : linkshere){
-			System.out.println(s);
+			if(!s.substring(0, 4).equals("User") && !s.substring(0, 4).equals("Wiki")){
+				System.out.println(s);
+			}
 		}
-
+//		*/
+		/*
 		Set<String> categoryMembers = getCategoryMembers("hardness_tests");
 		for(String s : categoryMembers){
 			System.out.println(s);
 		}
-		
+		*/
+		/*
 		String extract = getExtract("nanoindentation");
 		System.out.println(extract);
+		*/
 	}
 	
 	/*
 	con il metodo getJsonElement restituisco l'elemento JSON privato dell'identificativo.
 	Posso quindi poi interrogare ed estrarre ulteriori informazioni evitando di elaborarlo ogni volta per info diverse
 	*/
-	private static JsonElement getJsonElement(String action, String title, String page, String req) throws IOException{
-		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&"+title+"="+page+"&"+action+"="+req+"&format=json");
+	private static JsonElement getJsonElement(String action, String title, String page, String req, String limit) throws IOException{
+		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&"+title+"="+page+"&"+action+"="+req+"&format=json"+"&"+limit);
         HttpURLConnection request = (HttpURLConnection) url.openConnection();
         request.connect();
         JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
@@ -65,13 +75,13 @@ public static void main(String[] args) throws IOException{
         request.connect();
         JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
         JsonElement pages = jsonElement.getAsJsonObject().get("query").getAsJsonObject().get("pages");
-		JsonElement elem = getJsonElement("prop", "titles",page+"&exintro=&explaintext=", "extracts");
+		JsonElement elem = getJsonElement("prop", "titles",page+"&exintro=&explaintext=", "extracts", "");
 		String extract = elem.getAsJsonObject().get("extract").toString();
 		extract = extract.substring(1, extract.length()-5);
 		return extract;
 	}
 	private static Set<String> getCategories(String page) throws IOException{
-		JsonElement elem = getJsonElement("prop", "titles", page, "categories");
+		JsonElement elem = getJsonElement("prop", "titles", page, "categories", "cllimit=500");
 		HashSet<String> result = new HashSet<String>();
 		for(JsonElement cat : elem.getAsJsonObject().get("categories").getAsJsonArray()){
 			//scorro gli elementi categoria nell'array
@@ -82,7 +92,7 @@ public static void main(String[] args) throws IOException{
 		return result;
 	}
 	private static Set<String> getLinks(String page) throws IOException{
-		JsonElement elem = getJsonElement("prop", "titles",page, "links");
+		JsonElement elem = getJsonElement("prop", "titles",page, "links", "pllimit=500");
 		HashSet<String> result = new HashSet<String>();
 		for(JsonElement l : elem.getAsJsonObject().get("links").getAsJsonArray()){
 			String link = l.getAsJsonObject().get("title").toString();
@@ -93,13 +103,13 @@ public static void main(String[] args) throws IOException{
 	}
 	
 	private static Set<String> getLinksHere(String page) throws IOException{
-		JsonElement elem = getJsonElement("prop", "titles",page, "linkshere");
+		JsonElement elem = getJsonElement("prop", "titles",page, "linkshere", "lhlimit=500");
 		HashSet<String> result = new HashSet<String>();
 		for(JsonElement l : elem.getAsJsonObject().get("linkshere").getAsJsonArray()){
 			String link = l.getAsJsonObject().get("title").toString();
 			link = link.substring(1, link.length()-1);
 			result.add(link);
-			System.out.println(link);
+//			System.out.println(link);
 		}
 		return result;
 	}

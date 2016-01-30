@@ -18,19 +18,37 @@ public class ScopusExtraction {
 	private final static String APIKEY = "3b337850042d998802dd243936ecc35f";
 
 	public static void main(String[] args) throws IOException {
-		String documentAbstracts = getJsonAbstract("");
+
 	}
 
-	private static String getJsonAbstract(String string) throws IOException {
-		URL url = new URL("http://api.elsevier.com/content/abstract/scopus_id/84876703352?field=dc:description&apikey="+APIKEY+"&httpAccept=application/json");
+	public static Set<String> estraiAbstract(String[] author) throws IOException {
+		// TODO Auto-generated method stub
+		HashSet<String> estratti = new HashSet<String>();
+		Set<String> documenti = new HashSet<String>();
+		String cognome = author[0];
+		String nome = author[1];
+		String affiliazione = author[2];
+
+		String autore = getJsonAuthor(cognome, nome, affiliazione);
+		documenti =  getJsonDocument(autore);
+		for(String s : documenti){
+			String x = getJsonAbstract(s);
+			estratti.add(x);
+		}
+
+		return estratti;
+	}
+
+	private static String getJsonAbstract(String docID) throws IOException {
+		URL url = new URL("http://api.elsevier.com/content/abstract/scopus_id/"+docID+"?field=dc:description&apikey="+APIKEY+"&httpAccept=application/json");
 		HttpURLConnection request = (HttpURLConnection) url.openConnection();
 		request.connect();
 		JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
 		JsonElement pages = jsonElement.getAsJsonObject().get("abstracts-retrieval-response").getAsJsonObject().get("coredata").getAsJsonObject().get("dc:description");
 		String result = pages.toString();
 		result = result.substring(1, result.length()-1);
-		System.out.println(result);
-		return null;
+
+		return result;
 	}
 
 	private static String getJsonAuthor(String lastName, String firstName, String affiliation) throws IOException{
@@ -43,8 +61,10 @@ public class ScopusExtraction {
 		JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
 		JsonElement pages = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("entry");
 		JsonArray array = pages.getAsJsonArray();
+		for(JsonElement ele : array){
+//			System.out.println(ele.getAsJsonObject().get("dc:identifier").toString());
+		}
 		String result = array.get(0).getAsJsonObject().get("dc:identifier").toString();
-		System.out.println(result);
 		return result;
 	}
 
@@ -59,10 +79,9 @@ public class ScopusExtraction {
 		for(int i = 0; i < array.size(); i++){
 			String docID = array.get(i).getAsJsonObject().get("dc:identifier").toString();
 			docID = docID.substring(11, docID.length()-1);
-			System.out.println(docID);
+//			System.out.println(docID);
 			result.add(docID);
 		}
 		return result;
 	}
-
 }
