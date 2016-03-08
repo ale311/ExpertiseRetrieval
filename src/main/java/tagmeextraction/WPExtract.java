@@ -4,17 +4,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-class Paper {
+class WPExtract {
 	HashSet<String> tag;
 	HashSet<String> categories;
 	HashSet<String> extract;
 	
-	public Paper(Set<String> t, Set<String> c, Set<String> e){
+	public WPExtract(Set<String> t, Set<String> c, Set<String> e){
 		tag = (HashSet<String>) t;
 		categories = (HashSet<String>) c;
 		extract = (HashSet<String>) e;
 	}
-	public Paper(){
+	public WPExtract(){
 		HashSet<String> tag = new HashSet<String>();
 		HashSet<String> categories = new HashSet<String>();
 		HashSet<String> extract = new HashSet<String>();
@@ -68,7 +68,7 @@ class Paper {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Paper other = (Paper) obj;
+		WPExtract other = (WPExtract) obj;
 		if (categories == null) {
 			if (other.categories != null)
 				return false;

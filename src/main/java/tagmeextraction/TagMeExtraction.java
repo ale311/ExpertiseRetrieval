@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 
 public class TagMeExtraction {
 	public static void main (String[] args) throws IOException{
-		Paper cp = getPaperDescription("Schumacher won the race in Indianapolis");
+		WPExtract cp = getWPDescription("Schumacher won the race in Indianapolis");
 		for(String s : cp.extract){
 			System.out.println(s);
 		}
@@ -57,8 +57,8 @@ public class TagMeExtraction {
 	
 	
 	
-	public static Paper getPaperDescription(String text) throws IOException{
-		Paper currentPaper = new Paper();
+	public static WPExtract getWPDescription(String text) throws IOException{
+		WPExtract currentWP = new WPExtract();
 		//preparo i 3 set che conterranno le stringhe che estraggo da tagme
 		HashSet<String> tag = new HashSet<String>();
 		HashSet<String> categories = new HashSet<String>();
@@ -93,11 +93,11 @@ public class TagMeExtraction {
 //			result.add(title);
 			
 		}
-		currentPaper.setTag(tag);
-		currentPaper.setCategories(categories);
-		currentPaper.setExtract(extract);
+		currentWP.setTag(tag);
+		currentWP.setCategories(categories);
+		currentWP.setExtract(extract);
 		
-		return currentPaper;
+		return currentWP;
 	}
 	
 	
