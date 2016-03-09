@@ -21,10 +21,13 @@ public class ScopusExtraction {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
 		getJsonObject("nanoindentation", currentPage, result);
-		for(String s : result){
-			System.out.println(s);
-		}
 		System.out.println(result.size());
+		//lancio metodo che estrae info da ogni oggetto-paper tramite il suo S_id
+		for(String s : result){
+//			inutile salvare tutte le info in una mia struttura dati: costruisco subito il grafo con le info che ricevo da ogni SID
+			
+		}
+		//aggiungo entità al grafo
 	}
 
 	public static Set<String> estraiAbstract(String[] author) throws IOException {
