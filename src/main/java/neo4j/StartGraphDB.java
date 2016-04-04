@@ -49,8 +49,8 @@ public class StartGraphDB {
 		// TODO Auto-generated method stub
 
 		Map<String,Object> parameters = new HashMap<String, Object>();
-		String queryString = "merge(n1:"+tipoNodo1+"{ID:{nomeNodo1}})"+
-				"merge(n2:"+tipoNodo2+"{ID:{nomeNodo2}})"+
+		String queryString = "merge(n1:"+tipoNodo1+"{"+tipoNodo1+":{nomeNodo1}})"+
+				"merge(n2:"+tipoNodo2+"{"+tipoNodo2+":{nomeNodo2}})"+
 				"merge(n1)-[:"+tipoRel+"]-(n2)";
 		
 		parameters.put("nomeNodo1", nomeNodo1);
@@ -75,8 +75,8 @@ public class StartGraphDB {
 		// TODO Auto-generated method stub
 
 		Map<String,Object> parameters = new HashMap<String, Object>();
-		String queryString = "merge(n1:"+tipoNodo1+"{ID:{nomeNodo1}})"+
-				"merge(n2:"+tipoNodo2+"{ID:{nomeNodo2},"+tipoAttrNodo1+":{attributo1}})"+
+		String queryString = "merge(n1:"+tipoNodo1+"{"+tipoNodo1+":{nomeNodo1}})"+
+				"merge(n2:"+tipoNodo2+"{"+tipoNodo2+":{nomeNodo2},"+tipoAttrNodo1+":{attributo1}})"+
 				"merge(n1)-[:"+tipoRel+"]-(n2)";
 		
 		parameters.put("nomeNodo1", nomeNodo1);

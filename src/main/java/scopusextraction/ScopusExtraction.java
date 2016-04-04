@@ -32,11 +32,13 @@ public class ScopusExtraction {
 	private static final String HA_SUBJECT_AREA = "ha_subject_area";
 	private static final String HA_ABSTRACT = "ha_abstract";
 	private static final String HA_AFFILIATION_NAME = "ha_affiliazione";
-	private static final String HA_AFFILIATION_ID = null;
+	private static final String HA_AFFILIATION_ID = "ha_affiliation_id";
+	private static final String HA_SEDE = "sede";
+	private static final String IN_COUNTRY = "country";
 	
 
 	public static void main(String[] args) throws IOException {
-		Integer currentPage = 4980;
+		Integer currentPage = 4900;
 		HashSet<String> result = new HashSet<String>();
 		getJsonObject("nanoindentation", currentPage, result);
 		System.out.println(result.size());
@@ -48,6 +50,8 @@ public class ScopusExtraction {
 //		inserisciCreatore(graphDb, result);
 //		inserisciSubjectAreas(graphDb, result);
 		inserisciAffiliation(graphDb, result);
+//		inserisciAutori(graphDb, result);
+//		inserisciAbstract(graphDb, result);
 		//aggiungo entità al grafo
 	}
 //con questo metodo si inserisce, nel graphDB, il titolo associato allo scopus_id del paper
@@ -85,12 +89,99 @@ public class ScopusExtraction {
 			String surname = jsonArray.get(0).getAsJsonObject().get("preferred-name").getAsJsonObject().get("ce:surname").toString();
 			String givenName = jsonArray.get(0).getAsJsonObject().get("preferred-name").getAsJsonObject().get("ce:given-name").toString();
 			String authorName = surname.substring(1, surname.length()-1)+" "+givenName.substring(1, givenName.length()-1);
+			
 			authorId = authorId.substring(1, authorId.length()-1);
 			System.out.println(authorName);
 			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", authorName, "creator_name", HA_CREATORE);
 		}	
 	}
-
+	
+	private static void inserisciAutori (GraphDatabaseService graphDb, HashSet<String> result) throws IOException {
+		// TODO Auto-generated method stub
+		for(String scopus_id : result){
+//			itero sulle stringhe nel mio insieme: sono gli ID dei documenti, da cui estraggo tutte le info necessarie
+//			le memorizzo in opportune str.dati e le passo ad un metodo che inserirà opportunamente le info
+			URL url = new URL("http://api.elsevier.com/content/abstract/scopus_id/"+scopus_id+"?apiKey="+APIKEY+"&httpAccept=application/json&field=author");
+			HttpURLConnection request = (HttpURLConnection) url.openConnection();
+			request.connect();
+			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+//			System.out.println(jsonElement);
+			JsonArray jsonArray = jsonElement.getAsJsonObject()
+					.get("abstracts-retrieval-response").getAsJsonObject()
+					.get("authors").getAsJsonObject().get("author")
+//					.getAsJsonObject().get("author")
+					.getAsJsonArray();
+//			System.out.println(jsonArray);
+			for(JsonElement jse : jsonArray){
+				System.out.println("documento "+scopus_id);
+				String authorId = jse.getAsJsonObject().get("@auid").toString();
+				String surname = jse.getAsJsonObject().get("preferred-name").getAsJsonObject().get("ce:surname").toString();
+				String givenName = jse.getAsJsonObject().get("preferred-name").getAsJsonObject().get("ce:given-name").toString();
+				String authorName = surname.substring(1, surname.length()-1)+" "+givenName.substring(1, givenName.length()-1);
+				String affiliationId;
+				String affiliationName;
+				String affiliationCountry;
+				String affiliationCity;
+				JsonElement jso = jse.getAsJsonObject().get("affiliation");
+				System.out.println(jso);
+				
+				try {
+					affiliationId = jso.getAsJsonObject().get("@id").toString();
+					affiliationId = affiliationId.substring(1, affiliationId.length()-1);
+					System.out.println("non eccezione");
+					System.out.println(affiliationId);
+//					affiliationName = jso.getAsJsonObject().get("affilname").toString();
+//					affiliationName = affiliationName.substring(1, affiliationName.length()-1);
+//					
+//					affiliationCity = jso.getAsJsonObject().get("affiliation-city").toString();
+//					affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
+//					
+//					affiliationCountry = jso.getAsJsonObject().get("affiliation-country").toString();
+//					affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);
+					
+				} catch (Exception e) {
+//					//salvo l'array:
+//					System.out.println(e);
+					
+					System.out.println("eccezione");
+					JsonElement jsa = jso.getAsJsonArray().get(0);
+					// TODO: handle exception
+					//in questo caso è un array, quindi lo leggo come tale
+					affiliationId = jsa.getAsJsonObject().get("@id").toString();
+					affiliationId = affiliationId.substring(1, affiliationId.length()-1);
+					System.out.println(affiliationId);
+//					affiliationName = jsa.getAsJsonObject().get("affilname").toString();
+//					affiliationName = affiliationName.substring(1, affiliationName.length()-1);
+//					
+//					affiliationCity = jsa.getAsJsonObject().get("affiliation-city").toString();
+//					affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
+//					
+//					affiliationCountry = jsa.getAsJsonObject().get("affiliation-country").toString();
+//					affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);	
+					
+//					
+//				}		
+//				System.out.println("id riferito al documento n: "+scopus_id+"è: "+affiliationId);
+//				System.out.println("nome affiliazione del documento n: "+scopus_id+"è: "+affiliationName);
+//				System.out.println(("città: "+affiliationCity));
+//				System.out.println(("country: "+affiliationCountry));
+				authorId = authorId.substring(1, authorId.length()-1);
+				System.out.println(authorName);
+				
+			}
+				URL url2 = new URL("http://api.elsevier.com/content/affiliation/affiliation_id/"+affiliationId+"?apiKey="+APIKEY+"&httpAccept=application/json");
+				HttpURLConnection request2 = (HttpURLConnection) url.openConnection();
+				request2.connect();
+				JsonElement jsonElement2 = new JsonParser().parse(new InputStreamReader((InputStream) request2.getContent()));
+		// da completare!!! non funzionano le api di scopus
+			System.out.println(jsonElement2);
+			
+//			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", authorName, "creator_name", HA_CREATORE);
+		}	
+			
+		}
+	}
+	
 	
 	private static void inserisciSubjectAreas(GraphDatabaseService graphDb, HashSet<String> result) throws IOException {
 		// TODO Auto-generated method stub
@@ -114,6 +205,44 @@ public class ScopusExtraction {
 		}	
 	}
 	
+	private static void inserisciAbstract(GraphDatabaseService graphDb, HashSet<String> result) throws IOException {
+		// TODO Auto-generated method stub
+		for(String scopus_id : result){
+//			itero sulle stringhe nel mio insieme: sono gli ID dei documenti, da cui estraggo tutte le info necessarie
+//			le memorizzo in opportune str.dati e le passo ad un metodo che inserirà opportunamente le info
+			URL url = new URL("http://api.elsevier.com/content/abstract/scopus_id/"+scopus_id+"?apiKey="+APIKEY+"&httpAccept=application/json");
+			HttpURLConnection request = (HttpURLConnection) url.openConnection();
+			request.connect();
+			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+			String extract = jsonElement.getAsJsonObject()
+					.get("abstracts-retrieval-response")
+//					.getAsJsonObject().get("item")
+//					.getAsJsonObject().get("bibrecord")
+//					.getAsJsonObject().get("head")
+//					.getAsJsonObject().get("abstracts")
+//					.getAsJsonObject().get("abstract")
+					.getAsJsonObject().get("coredata")
+					.getAsJsonObject().get("dc:description")
+					.toString();
+//			extract.toString();
+			extract = extract.replaceAll("2015 Elsevier Ltd All rights reserved.", "");
+//			extract = extract.replace("2015|2014|Elsevier|Ltd|All|rights|reserved", "");
+			
+			//RISOLVERE PROBLEMA DEL RIMPIAZZAMENTO
+			extract = extract.replace("\\n", "");
+			extract = extract.replace("©", "");
+			extract = extract.substring(1, extract.length()-1);
+			extract = extract.trim();
+			System.out.println(extract);
+			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", extract , "ABSTRACT", HA_ABSTRACT);
+//			for (JsonElement jse : jsonarray){
+//				String sa = jse.getAsJsonObject().get("@abbrev").toString();
+//				sa = sa.substring(1, sa.length()-1);
+//				System.out.println(sa);
+//				StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", sa , "SUBJECT_AREA", HA_SUBJECT_AREA);
+//			}
+		}	
+	}
 	private static void inserisciAffiliation(GraphDatabaseService graphDb, HashSet<String> result) throws IOException {
 		// TODO Auto-generated method stub
 		for(String scopus_id : result){
@@ -141,41 +270,40 @@ public class ScopusExtraction {
 				
 				affiliationCountry = jso.getAsJsonObject().get("affiliation-country").toString();
 				affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);
-				
+				StartGraphDB.insertRelationAttribute(graphDb, scopus_id, "SCOPUS_ID", affiliationName , "AFFILIATION_NAME",affiliationId, "AFFILIATION_ID",  HA_AFFILIATION_NAME);
+				StartGraphDB.insertRelationAttribute(graphDb, affiliationCity, "CITY", affiliationName, "AFFILIATION_NAME", affiliationId, "AFFILIATION_ID",  HA_SEDE);
+				StartGraphDB.insertRelation(graphDb, affiliationCity, "CITY", affiliationCountry, "COUNTRY", IN_COUNTRY);
 			} catch (Exception e) {
 				//salvo l'array:
-				JsonElement jsa = jso.getAsJsonArray().get(0);
-				// TODO: handle exception
-//				System.out.println(e);
-				//in questo caso è un array, quindi lo leggo come tale
-				affiliationId = jsa.getAsJsonObject().get("@id").toString();
-				affiliationId = affiliationId.substring(1, affiliationId.length()-1);
-				
-				affiliationName = jsa.getAsJsonObject().get("affilname").toString();
-				affiliationName = affiliationName.substring(1, affiliationName.length()-1);
-				
-				affiliationCity = jsa.getAsJsonObject().get("affiliation-city").toString();
-				affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
-				
-				affiliationCountry = jsa.getAsJsonObject().get("affiliation-country").toString();
-				affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);	
+				System.out.println("eccezione");
+				try {
+					JsonElement jsa = jso.getAsJsonArray().get(0);
+					// TODO: handle exception
+					//in questo caso è un array, quindi lo leggo come tale
+					affiliationId = jsa.getAsJsonObject().get("@id").toString();
+					affiliationId = affiliationId.substring(1, affiliationId.length()-1);
+					
+					affiliationName = jsa.getAsJsonObject().get("affilname").toString();
+					affiliationName = affiliationName.substring(1, affiliationName.length()-1);
+					
+					affiliationCity = jsa.getAsJsonObject().get("affiliation-city").toString();
+					affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
+					
+					affiliationCountry = jsa.getAsJsonObject().get("affiliation-country").toString();
+					affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);	
+					
+					StartGraphDB.insertRelationAttribute(graphDb, scopus_id, "SCOPUS_ID", affiliationName , "AFFILIATION_NAME",affiliationId, "AFFILIATION_ID",  HA_AFFILIATION_NAME);
+					StartGraphDB.insertRelationAttribute(graphDb, affiliationCity, "CITY", affiliationName, "AFFILIATION_NAME", affiliationId, "AFFILIATION_ID",  HA_SEDE);
+					StartGraphDB.insertRelation(graphDb, affiliationCity, "CITY", affiliationCountry, "COUNTRY", IN_COUNTRY);
+					
+				} catch (Exception e2) {
+					// TODO: handle exception
+					System.out.println("non legge jso.tostring del documento: "+scopus_id);
+					System.out.println("quindi non posso inserire nulla nelle affiliazioni");
+				}
 				
 			}		
 					
-			System.out.println("id riferito al documento n: "+scopus_id+"è: "+affiliationId);
-			System.out.println("nome affiliazione del documento n: "+scopus_id+"è: "+affiliationName);
-			System.out.println(("città: "+affiliationCity));
-			System.out.println(("country: "+affiliationCountry));
-			
-//			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", affiliationId , "AFFILIATION_ID", HA_AFFILIATION_ID);
-			StartGraphDB.insertRelationAttribute(graphDb, scopus_id, "SCOPUS_ID", affiliationName , "AFFILIATION_NAME",affiliationId, "AFFILIATION_ID",  HA_AFFILIATION_NAME);
-//			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", sa , "SUBJECT_AREA", HA_SUBJECT_AREA);
-//			for (JsonElement jse : jsonarray){
-//				String sa = jse.getAsJsonObject().get("@abbrev").toString();
-//				sa = sa.substring(1, sa.length()-1);
-//				System.out.println(sa);
-//				StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", sa , "SUBJECT_AREA", HA_SUBJECT_AREA);
-//			}
 		}	
 	}
 	
