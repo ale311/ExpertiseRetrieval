@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.impl.core.IsolatedTransactionTokenCreator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -46,11 +47,11 @@ public class ScopusExtraction {
 //		int ok = neo4j.StartGraphDB.insertDocuments(result);
 //		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
 		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
-//		inserisciTitolo(graphDb, result);
-//		inserisciCreatore(graphDb, result);
-//		inserisciSubjectAreas(graphDb, result);
+		inserisciTitolo(graphDb, result);
+		inserisciCreatore(graphDb, result);
+		inserisciSubjectAreas(graphDb, result);
 		inserisciAffiliation(graphDb, result);
-//		inserisciAutori(graphDb, result);
+		inserisciAutori(graphDb, result);
 //		inserisciAbstract(graphDb, result);
 		//aggiungo entità al grafo
 	}
@@ -92,7 +93,7 @@ public class ScopusExtraction {
 			
 			authorId = authorId.substring(1, authorId.length()-1);
 			System.out.println(authorName);
-			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", authorName, "creator_name", HA_CREATORE);
+			StartGraphDB.insertRelationAttribute(graphDb, scopus_id, "SCOPUS_ID", authorId, "AUTHOR_ID", authorName, "AUTHOR_NAME", HA_CREATORE);
 		}	
 	}
 	
@@ -113,70 +114,112 @@ public class ScopusExtraction {
 					.getAsJsonArray();
 //			System.out.println(jsonArray);
 			for(JsonElement jse : jsonArray){
-				System.out.println("documento "+scopus_id);
+//				System.out.println("documento "+scopus_id);
 				String authorId = jse.getAsJsonObject().get("@auid").toString();
+				authorId = authorId.substring(1, authorId.length()-1);
 				String surname = jse.getAsJsonObject().get("preferred-name").getAsJsonObject().get("ce:surname").toString();
 				String givenName = jse.getAsJsonObject().get("preferred-name").getAsJsonObject().get("ce:given-name").toString();
 				String authorName = surname.substring(1, surname.length()-1)+" "+givenName.substring(1, givenName.length()-1);
+//				System.out.println(authorName);
 				String affiliationId;
-				String affiliationName;
+				String affiliationName = null;
 				String affiliationCountry;
 				String affiliationCity;
 				JsonElement jso = jse.getAsJsonObject().get("affiliation");
-				System.out.println(jso);
-				
+//				System.out.println(jso);
+				if (jso != null) {
+					
 				try {
+					
 					affiliationId = jso.getAsJsonObject().get("@id").toString();
 					affiliationId = affiliationId.substring(1, affiliationId.length()-1);
-					System.out.println("non eccezione");
+					
+					System.out.println("sono nel try");
+					System.out.println("ID della affiliazione "+affiliationId+" di utente "+authorId);
+					
+					URL url2 = new URL("http://api.elsevier.com/content/affiliation/affiliation_id/"+affiliationId+"?apiKey="+APIKEY+"&httpAccept=application/json");
+					HttpURLConnection request2 = (HttpURLConnection) url2.openConnection();
+					request2.connect();
+					JsonElement jsonElement2 = new JsonParser().parse(new InputStreamReader((InputStream) request2.getContent()));
+					JsonElement element = jsonElement2.getAsJsonObject().get("affiliation-retrieval-response");
+					
+					
+//					System.out.println(affiliationId);
+					affiliationName = element.getAsJsonObject().get("affiliation-name").toString();
+					affiliationName = affiliationName.substring(1, affiliationName.length()-1);
+					
+					affiliationCity = element.getAsJsonObject().get("city").toString();
+					affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
+					
+					affiliationCountry = element.getAsJsonObject().get("country").toString();
+					affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);
+					System.out.println(authorId);
 					System.out.println(affiliationId);
-//					affiliationName = jso.getAsJsonObject().get("affilname").toString();
-//					affiliationName = affiliationName.substring(1, affiliationName.length()-1);
-//					
-//					affiliationCity = jso.getAsJsonObject().get("affiliation-city").toString();
-//					affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
-//					
-//					affiliationCountry = jso.getAsJsonObject().get("affiliation-country").toString();
-//					affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);
+					System.out.println(affiliationName);
+					System.out.println(affiliationCity);
+					System.out.println(affiliationCountry);
+					System.out.println("-------------");
+					
+					StartGraphDB.insertRelationAttribute(graphDb, scopus_id, "SCOPUS_ID", authorName, "AUTHOR_NAME",  authorId, "AUTHOR_ID", HA_AUTORE);
+					
+					StartGraphDB.insertRelationAttribute2(graphDb, authorId, "AUTHOR_ID", authorName, "AUTHOR_NAME", affiliationId, "AFFILIATION_ID", affiliationName, "AFFILIATION_NAME", HA_AFFILIATION_ID);
+					
+					
 					
 				} catch (Exception e) {
+//					System.out.println("sono nel ramo catch perché non è un array o è nullpointerexception");
 //					//salvo l'array:
-//					System.out.println(e);
+					try {
+						System.out.println("sono nel catch");
+						JsonElement jsa = jso.getAsJsonArray().get(0);
+//						System.out.println(jsa);
+						affiliationId = jsa.getAsJsonObject().get("@id").toString();
+						affiliationId = affiliationId.substring(1, affiliationId.length()-1);
+						System.out.println(affiliationId);
+						URL url2 = new URL("http://api.elsevier.com/content/affiliation/affiliation_id/"+affiliationId+"?apiKey="+APIKEY+"&httpAccept=application/json");
+						HttpURLConnection request2 = (HttpURLConnection) url2.openConnection();
+						request2.connect();
+						JsonElement jsonElement2 = new JsonParser().parse(new InputStreamReader((InputStream) request2.getContent()));
+						JsonElement element = jsonElement2.getAsJsonObject().get("affiliation-retrieval-response");
+						
+						
+//						System.out.println(affiliationId);
+						affiliationName = element.getAsJsonObject().get("affiliation-name").toString();
+						affiliationName = affiliationName.substring(1, affiliationName.length()-1);
+						
+						affiliationCity = element.getAsJsonObject().get("city").toString();
+						affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
+						
+						affiliationCountry = element.getAsJsonObject().get("country").toString();
+						affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);
+						System.out.println(authorId);
+						System.out.println(affiliationId);
+						System.out.println(affiliationName);
+						System.out.println(affiliationCity);
+						System.out.println(affiliationCountry);
+						System.out.println("-------------");
+						
+						StartGraphDB.insertRelationAttribute(graphDb, scopus_id, "SCOPUS_ID", authorName, "AUTHOR_NAME", authorId, "AUTHOR_ID", HA_AUTORE);
+
+						
+						StartGraphDB.insertRelationAttribute2(graphDb, authorId, "AUTHOR_ID", authorName, "AUTHOR_NAME", affiliationId, "AFFILIATION_ID", affiliationName, "AFFILIATION_NAME", HA_AFFILIATION_ID);
+						
+					} catch (Exception e2) {
+						// TODO: handle exception
+						if(e instanceof java.lang.NullPointerException){
+							//non fare nulla, ma stampa solo 
+//							System.out.println("sono nel ramo catch a causa di "+e);
+						}
+//						System.out.println(e2);
+					}
 					
-					System.out.println("eccezione");
-					JsonElement jsa = jso.getAsJsonArray().get(0);
-					// TODO: handle exception
-					//in questo caso è un array, quindi lo leggo come tale
-					affiliationId = jsa.getAsJsonObject().get("@id").toString();
-					affiliationId = affiliationId.substring(1, affiliationId.length()-1);
-					System.out.println(affiliationId);
-//					affiliationName = jsa.getAsJsonObject().get("affilname").toString();
-//					affiliationName = affiliationName.substring(1, affiliationName.length()-1);
-//					
-//					affiliationCity = jsa.getAsJsonObject().get("affiliation-city").toString();
-//					affiliationCity = affiliationCity.substring(1, affiliationCity.length()-1);
-//					
-//					affiliationCountry = jsa.getAsJsonObject().get("affiliation-country").toString();
-//					affiliationCountry = affiliationCountry.substring(1, affiliationCountry.length()-1);	
-					
-//					
-//				}		
-//				System.out.println("id riferito al documento n: "+scopus_id+"è: "+affiliationId);
-//				System.out.println("nome affiliazione del documento n: "+scopus_id+"è: "+affiliationName);
-//				System.out.println(("città: "+affiliationCity));
-//				System.out.println(("country: "+affiliationCountry));
-				authorId = authorId.substring(1, authorId.length()-1);
-				System.out.println(authorName);
-				
+				}
 			}
-				URL url2 = new URL("http://api.elsevier.com/content/affiliation/affiliation_id/"+affiliationId+"?apiKey="+APIKEY+"&httpAccept=application/json");
-				HttpURLConnection request2 = (HttpURLConnection) url.openConnection();
-				request2.connect();
-				JsonElement jsonElement2 = new JsonParser().parse(new InputStreamReader((InputStream) request2.getContent()));
-		// da completare!!! non funzionano le api di scopus
-			System.out.println(jsonElement2);
-			
-//			StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", authorName, "creator_name", HA_CREATORE);
+
+				
+//				StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", authorName, "creator_name", HA_CREATORE);
+				
+				
 		}	
 			
 		}
@@ -258,6 +301,8 @@ public class ScopusExtraction {
 			String affiliationName;
 			String affiliationCountry;
 			String affiliationCity;
+			if (jso!=null) {
+				
 			try {
 				affiliationId = jso.getAsJsonObject().get("@id").toString();
 				affiliationId = affiliationId.substring(1, affiliationId.length()-1);
@@ -275,7 +320,6 @@ public class ScopusExtraction {
 				StartGraphDB.insertRelation(graphDb, affiliationCity, "CITY", affiliationCountry, "COUNTRY", IN_COUNTRY);
 			} catch (Exception e) {
 				//salvo l'array:
-				System.out.println("eccezione");
 				try {
 					JsonElement jsa = jso.getAsJsonArray().get(0);
 					// TODO: handle exception
@@ -297,12 +341,10 @@ public class ScopusExtraction {
 					StartGraphDB.insertRelation(graphDb, affiliationCity, "CITY", affiliationCountry, "COUNTRY", IN_COUNTRY);
 					
 				} catch (Exception e2) {
-					// TODO: handle exception
-					System.out.println("non legge jso.tostring del documento: "+scopus_id);
-					System.out.println("quindi non posso inserire nulla nelle affiliazioni");
 				}
 				
 			}		
+			}
 					
 		}	
 	}

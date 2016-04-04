@@ -85,5 +85,26 @@ public class StartGraphDB {
 		parameters.put("tipoRelazione", tipoRel);
 		graphDb.execute(queryString, parameters);
 	}
+
+	
+
+	public static void insertRelationAttribute2(GraphDatabaseService graphDb, String nomeNodo1, String tipoNodo1,
+			String attrNodo1, String tipoAttrNodo1, String nomeNodo2, String tipoNodo2, String attrNodo2,
+			String tipoAttrNodo2, String tipoRel) {
+		// TODO Auto-generated method stub
+		Map<String,Object> parameters = new HashMap<String, Object>();
+		String queryString = "merge(n1:"+tipoNodo1+"{"+tipoNodo1+":{nomeNodo1},"+tipoAttrNodo1+":{attributo1}})"+
+				"merge(n2:"+tipoNodo2+"{"+tipoNodo2+":{nomeNodo2},"+tipoAttrNodo2+":{attributo2}})"+
+				"merge(n1)-[:"+tipoRel+"]-(n2)";
+		
+		parameters.put("nomeNodo1", nomeNodo1);
+		parameters.put("nomeNodo2", nomeNodo2);
+		parameters.put("attributo1", attrNodo1);
+		parameters.put("attributo2", attrNodo2);
+		parameters.put("tipoRelazione", tipoRel);
+		graphDb.execute(queryString, parameters);
+	}
+
+	
 	
 }
