@@ -23,8 +23,7 @@ public class TagMeExtraction {
 		}
 		
 	}
-	
-	
+
 	public static Set<String> getJsonDocument(String text) throws IOException{
 		String text2 = text.replaceAll("\\W", "+");
 		String ab = "false";
@@ -45,12 +44,6 @@ public class TagMeExtraction {
 			for(JsonElement cat : ar.getAsJsonArray()){
 				System.out.println(cat.toString());
 			}
-			
-//			extract = ele.getAsJsonObject().get("abstract").toString();
-////			System.out.println(extract);
-//			title = title.substring(1, title.length()-1);
-//			result.add(title);
-			
 		}
 		return result;
 	}
@@ -62,7 +55,7 @@ public class TagMeExtraction {
 		//preparo i 3 set che conterranno le stringhe che estraggo da tagme
 		HashSet<String> tag = new HashSet<String>();
 		HashSet<String> categories = new HashSet<String>();
-		HashSet<String> extract = new HashSet<String>();
+		HashSet<String> introWP = new HashSet<String>();
 		//preparo il testo per fare l'estrazione del JSON da tagme
 		String text2 = text.replaceAll("\\W", "+");
 		text2.replace("\\n", "");
@@ -79,23 +72,16 @@ public class TagMeExtraction {
 			String title = ele.getAsJsonObject().get("title").toString();
 			tag.add(title.substring(1, title.length()-1));
 			String extr = ele.getAsJsonObject().get("abstract").toString();
-			extract.add(extr.substring(1, extr.length()-1));
+			introWP.add(extr.substring(1, extr.length()-1));
 			JsonElement ar = ele.getAsJsonObject().get("dbpedia_categories");
 			for(JsonElement e : ar.getAsJsonArray()){
-//				System.out.println(cat.toString());
 				String cat = e.toString();
 				categories.add(cat.substring(1, cat.length()-1));
 			}
-			
-//			extract = ele.getAsJsonObject().get("abstract").toString();
-////			System.out.println(extract);
-//			title = title.substring(1, title.length()-1);
-//			result.add(title);
-			
 		}
 		currentWP.setTag(tag);
 		currentWP.setCategories(categories);
-		currentWP.setExtract(extract);
+		currentWP.setExtract(introWP);
 		
 		return currentWP;
 	}

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-class WPExtract {
+public class WPExtract {
 	HashSet<String> tag;
 	HashSet<String> categories;
 	HashSet<String> extract;
