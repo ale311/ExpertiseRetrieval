@@ -28,11 +28,11 @@ import au.com.bytecode.opencsv.CSVWriter;
 import neo4j.StartGraphDB;
 import scala.util.parsing.json.JSONObject;
 public class ScopusExtraction {
-	private final static String APIKEY = "703fc00b8c3e5217790b6f7c98759d02";
-//	private final static String APIKEY = "f011c0cb54cee8a039da5392961a525b";
+//	private final static String APIKEY = "703fc00b8c3e5217790b6f7c98759d02";
+//	private final static String APIKEY = "	";
 //	private final static String APIKEY = "0d63be8ff78f8c7127fd35d77a502294";
 //	private final static String APIKEY = "544c126025d93754f02fe6615f634c27";
-//	private final static String APIKEY = "b61139dd20be6485a3f9332b01ccfd95";
+	private final static String APIKEY = "b61139dd20be6485a3f9332b01ccfd95";
 
 	
 	private static final String HA_TITOLO = "ha_titolo";
@@ -40,7 +40,7 @@ public class ScopusExtraction {
 	private static final String HA_AUTORE = "ha_autore";
 	private static final String CREATO = "data_di_pubblicazione";
 	private static final String TIPO_AGGREGAZIONE = "ha_tipo_di_aggregazione";
-	private static final String CYTED_BY = "ha_numero_di_citazioni";
+	private static final String CITEDBY = "ha_numero_di_citazioni";
 	private static final String HA_PUBLICATION_NAME = "ha_nome_di_pubblicazione";
 	private static final String HA_PUBLISHER = "ha_publisher";
 	private static final String HA_SUBJECT_AREA = "ha_subject_area";
@@ -62,17 +62,17 @@ public class ScopusExtraction {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
 
-		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
+//		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
-//		result = LeggiCSV.getScopusIDCSV("util/export.csv");
+		result = LeggiCSV.getScopusIDCSV("util/export.csv");
 
 //		ScriviCSV.writeCSV(result, "util/extract.csv");
 		
 		System.out.println(result.size());
 
 //		int ok = neo4j.StartGraphDB.insertDocuments(result);
-//		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
-		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
+		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+//		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		System.out.println("analizzo titolo");
 //		LinkTitle.inserisciTitolo(graphDb,result,APIKEY, HA_TITOLO);
 //		System.out.println("analizzo creatore");
@@ -85,18 +85,12 @@ public class ScopusExtraction {
 //		LinkAuthors.inserisciAutori(graphDb,result, APIKEY, HA_AUTORE, HA_AFFILIATION_ID);
 //		System.out.println("analizzo numero di citazioni");
 //		LinkCountCitedBy.inserisciNumberOfCitations(graphDb, result, APIKEY, CYTED_BY);
-//		System.out.println("analizzo abstract");
-//		LinkAbstract.inserisciAbstract(graphDb, result, APIKEY, HA_ABSTRACT);
+		System.out.println("analizzo abstract");
+		LinkAbstract.inserisciAbstract(graphDb, result, APIKEY, HA_ABSTRACT);
 		
-		
-		int i = 0;
-		for(String extract : result){
-//			System.out.println(extract);
-			i++;
-			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
-			
-//			System.out.println("numero di inserimento tag numero: "+ i);			
-		}
+//		for(String extract : result){
+//			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
+//		}
 	}
 
 
