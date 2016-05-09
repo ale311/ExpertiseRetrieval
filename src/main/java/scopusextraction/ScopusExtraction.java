@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,11 @@ import neo4j.StartGraphDB;
 import scala.util.parsing.json.JSONObject;
 public class ScopusExtraction {
 //	private final static String APIKEY = "703fc00b8c3e5217790b6f7c98759d02";
-//	private final static String APIKEY = "	";
+	private final static String APIKEY = "b83798f2bae2c7a72f9a4474a5b7293f";
 //	private final static String APIKEY = "0d63be8ff78f8c7127fd35d77a502294";
 //	private final static String APIKEY = "544c126025d93754f02fe6615f634c27";
-	private final static String APIKEY = "b61139dd20be6485a3f9332b01ccfd95";
+//	private final static String APIKEY = "b61139dd20be6485a3f9332b01ccfd95";
+	
 
 	
 	private static final String HA_TITOLO = "ha_titolo";
@@ -61,18 +63,24 @@ public class ScopusExtraction {
 	public static void main(String[] args) throws IOException {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
-
+		HashMap<String, String> csv = new HashMap<>();
+		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+//		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
 		result = LeggiCSV.getScopusIDCSV("util/export.csv");
+//		csv = LeggiCSV.getRelations("util/scopusid-autorid.csv");
 
+//		for(String source : csv.keySet()){
+//			String target = csv.get(source);
+//			StartGraphDB.insertRelation(graphDb, source, "SCOPUS_ID", target, "AUTHOR_ID", "ha_autore");
+//			System.out.println("sto inserendo "+source);
+//		}
 //		ScriviCSV.writeCSV(result, "util/extract.csv");
 		
-		System.out.println(result.size());
+//		System.out.println(result.size());
 
 //		int ok = neo4j.StartGraphDB.insertDocuments(result);
-		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
-//		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		System.out.println("analizzo titolo");
 //		LinkTitle.inserisciTitolo(graphDb,result,APIKEY, HA_TITOLO);
 //		System.out.println("analizzo creatore");
@@ -80,14 +88,13 @@ public class ScopusExtraction {
 //		System.out.println("analizzo subj area");
 //		LinkSubjectAreas.inserisciSubjectAreas(graphDb, result, APIKEY, HA_SUBJECT_AREA);
 //		System.out.println("analizzo affiliation");
-//		LinkAffiliation.inserisciAffiliation(graphDb, result, APIKEY, HA_AFFILIATION_ID, HA_SEDE, IN_COUNTRY);
-//		System.out.println("analizzo autori");
-//		LinkAuthors.inserisciAutori(graphDb,result, APIKEY, HA_AUTORE, HA_AFFILIATION_ID);
+//		LinkAffiliationDocument.inserisciAffiliation(graphDb, result, APIKEY, HA_AFFILIATION_ID, HA_SEDE, IN_COUNTRY);
+		System.out.println("analizzo autori");
+		LinkAuthors.inserisciAutori(graphDb,result, APIKEY, HA_AUTORE, HA_AFFILIATION_ID);
 //		System.out.println("analizzo numero di citazioni");
-//		LinkCountCitedBy.inserisciNumberOfCitations(graphDb, result, APIKEY, CYTED_BY);
-		System.out.println("analizzo abstract");
-		LinkAbstract.inserisciAbstract(graphDb, result, APIKEY, HA_ABSTRACT);
-		
+//		LinkCountCitedBy.inserisciNumberOfCitations(graphDb, result, APIKEY, CITEDBY);
+//		System.out.println("analizzo abstract");
+//		LinkAbstract.inserisciAbstract(graphDb, result, APIKEY, HA_ABSTRACT);
 //		for(String extract : result){
 //			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
 //		}
