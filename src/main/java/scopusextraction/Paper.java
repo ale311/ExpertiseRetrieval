@@ -2,6 +2,8 @@ package scopusextraction;
 
 import java.util.HashSet;
 
+import authorExtraction.Author;
+
 public class Paper {
 	String scopusID;
 	HashSet<Author> authors;
