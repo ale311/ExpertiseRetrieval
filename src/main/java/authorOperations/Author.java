@@ -1,4 +1,4 @@
-package authorExtraction;
+package authorOperations;
 
 public class Author {
 	String authorID;

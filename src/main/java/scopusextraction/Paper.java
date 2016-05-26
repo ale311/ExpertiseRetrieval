@@ -2,7 +2,7 @@ package scopusextraction;
 
 import java.util.HashSet;
 
-import authorExtraction.Author;
+import authorOperations.Author;
 
 public class Paper {
 	String scopusID;

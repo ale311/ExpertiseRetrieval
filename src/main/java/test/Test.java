@@ -20,7 +20,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import au.com.bytecode.opencsv.CSVReader;
-import redis.clients.jedis.Jedis;
 
 public class Test{
 
@@ -28,12 +27,22 @@ public class Test{
 		MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
 
 		DB db = mongoClient.getDB( "mydb" );
-		DBCollection coll = db.getCollection("testCollection");
-		BasicDBObject doc = new BasicDBObject("name", "MongoDB")
-		        .append("type", "database")
-		        .append("count", 1)
-		        .append("info", new BasicDBObject("x", 203).append("y", 102));
-		coll.insert(doc);
+		DBCollection coll = db.getCollection("collection");
+		lanciaTest(coll);
+	}
+	
+	public static void lanciaTest (DBCollection coll){
+		
+		BasicDBObject query = new BasicDBObject("weight", new BasicDBObject("$gt", 0.50));
+
+		DBCursor cursor = coll.find(query);
+		try {
+		    while (cursor.hasNext()) {
+		        System.out.println(cursor.next());
+		    }
+		} finally {
+		    cursor.close();
+		}
 	}
 
 }

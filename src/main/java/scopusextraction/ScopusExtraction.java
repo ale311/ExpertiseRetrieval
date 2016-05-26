@@ -64,11 +64,11 @@ public class ScopusExtraction {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
 		HashMap<String, String> csv = new HashMap<>();
-		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+//		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
 //		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
-		result = LeggiCSV.getScopusIDCSV("util/export.csv");
+		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
 //		csv = LeggiCSV.getRelations("util/scopusid-autorid.csv");
 
 //		for(String source : csv.keySet()){
@@ -89,8 +89,8 @@ public class ScopusExtraction {
 //		LinkSubjectAreas.inserisciSubjectAreas(graphDb, result, APIKEY, HA_SUBJECT_AREA);
 //		System.out.println("analizzo affiliation");
 //		LinkAffiliationDocument.inserisciAffiliation(graphDb, result, APIKEY, HA_AFFILIATION_ID, HA_SEDE, IN_COUNTRY);
-		System.out.println("analizzo autori");
-		LinkAuthors.inserisciAutori(graphDb,result, APIKEY, HA_AUTORE, HA_AFFILIATION_ID);
+//		System.out.println("analizzo autori");
+//		LinkAuthors.inserisciAutori(graphDb,result, APIKEY, HA_AUTORE, HA_AFFILIATION_ID);
 //		System.out.println("analizzo numero di citazioni");
 //		LinkCountCitedBy.inserisciNumberOfCitations(graphDb, result, APIKEY, CITEDBY);
 //		System.out.println("analizzo abstract");
@@ -101,58 +101,58 @@ public class ScopusExtraction {
 	}
 
 
-	private static Set<String> getJsonObject (String world, int currentPage, Set<String> result) throws IOException{
-		URL url = new URL("http://api.elsevier.com/content/search/scopus?query="+world+"&sort=citedby-count&start="+currentPage
-				+"&count="+count+"&apikey="+APIKEY);
-		HttpURLConnection request = (HttpURLConnection) url.openConnection();
-		request.connect();
-		Integer totalPages = null;
-
-		JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-		JsonElement js_numberOfResults = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("opensearch:totalResults");
-		String temp_numberOfResults = js_numberOfResults.toString();
-		temp_numberOfResults = temp_numberOfResults.substring(1, temp_numberOfResults.length()-1);
-		Integer numberOfResults = Integer.parseInt(temp_numberOfResults);
-		JsonElement js_itemsPerPage = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("opensearch:itemsPerPage");
-		String temp_itemsPerPage = js_itemsPerPage.toString();
-		temp_itemsPerPage = temp_itemsPerPage.substring(1, temp_itemsPerPage.length()-1);
-		Integer itemsPerPage = Integer.parseInt(temp_itemsPerPage);
-		int numberOfPages = numberOfResults/itemsPerPage;
-		System.out.println("il numero totale di risultati è "+temp_numberOfResults);
-		System.out.println("il numero di pagine è "+numberOfPages);
-		System.out.println("il numero di elementi per ogni pagina è "+itemsPerPage);
-		//		ho ottenuto fin qui il numero di elementi e di elementi per pagina (quindi ricavo le il numero di pagine per l'estrazione)
-		//		lancio un metodo interno che esegue N volte lo stesso algoritmo per memorizzare tutto dentro una struttura dati globale ovviamente
-		while (currentPage < numberOfResults){
-			estraiOggetti(world, currentPage, result);
-			System.out.println("la dimensione di result è: "+result.size());
-			currentPage = currentPage + itemsPerPage;
-			if(currentPage>1000)break;
-		}
-		return result;
-	}
-	private static int estraiOggetti(String world, int currentPage, Set<String> result) throws IOException {
-		
-		URL url = new URL("http://api.elsevier.com/content/search/scopus?query=all("+world+")"+"&apikey="+APIKEY+"&start="+currentPage+"&count="+count+"&sort=citedby-count");
-
-		HttpURLConnection request = (HttpURLConnection) url.openConnection();
-		request.connect();
-
-		JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-
-		System.out.println("sto analizzando la pagina numero: "+currentPage);
-		System.out.println("sto analizzando la page numero: "+jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("opensearch:startIndex"));
-		JsonElement pages = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("entry").getAsJsonArray();
-		String scopus_id = null;
-		for(JsonElement elem : pages.getAsJsonArray()){
-			scopus_id = elem.getAsJsonObject().get("dc:identifier").getAsString();
-			scopus_id = scopus_id.substring(10, scopus_id.length());
-			System.out.println(scopus_id);
-			if(result.contains(scopus_id)){
-				System.out.println("presente");
-			};
-			result.add(scopus_id);
-		}
-		return (Integer) currentPage;
-	}
+//	private static Set<String> getJsonObject (String world, int currentPage, Set<String> result) throws IOException{
+//		URL url = new URL("http://api.elsevier.com/content/search/scopus?query="+world+"&sort=citedby-count&start="+currentPage
+//				+"&count="+count+"&apikey="+APIKEY);
+//		HttpURLConnection request = (HttpURLConnection) url.openConnection();
+//		request.connect();
+//		Integer totalPages = null;
+//
+//		JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+//		JsonElement js_numberOfResults = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("opensearch:totalResults");
+//		String temp_numberOfResults = js_numberOfResults.toString();
+//		temp_numberOfResults = temp_numberOfResults.substring(1, temp_numberOfResults.length()-1);
+//		Integer numberOfResults = Integer.parseInt(temp_numberOfResults);
+//		JsonElement js_itemsPerPage = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("opensearch:itemsPerPage");
+//		String temp_itemsPerPage = js_itemsPerPage.toString();
+//		temp_itemsPerPage = temp_itemsPerPage.substring(1, temp_itemsPerPage.length()-1);
+//		Integer itemsPerPage = Integer.parseInt(temp_itemsPerPage);
+//		int numberOfPages = numberOfResults/itemsPerPage;
+//		System.out.println("il numero totale di risultati è "+temp_numberOfResults);
+//		System.out.println("il numero di pagine è "+numberOfPages);
+//		System.out.println("il numero di elementi per ogni pagina è "+itemsPerPage);
+//		//		ho ottenuto fin qui il numero di elementi e di elementi per pagina (quindi ricavo le il numero di pagine per l'estrazione)
+//		//		lancio un metodo interno che esegue N volte lo stesso algoritmo per memorizzare tutto dentro una struttura dati globale ovviamente
+//		while (currentPage < numberOfResults){
+//			estraiOggetti(world, currentPage, result);
+//			System.out.println("la dimensione di result è: "+result.size());
+//			currentPage = currentPage + itemsPerPage;
+//			if(currentPage>1000)break;
+//		}
+//		return result;
+//	}
+//	private static int estraiOggetti(String world, int currentPage, Set<String> result) throws IOException {
+//		
+//		URL url = new URL("http://api.elsevier.com/content/search/scopus?query=all("+world+")"+"&apikey="+APIKEY+"&start="+currentPage+"&count="+count+"&sort=citedby-count");
+//
+//		HttpURLConnection request = (HttpURLConnection) url.openConnection();
+//		request.connect();
+//
+//		JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+//
+//		System.out.println("sto analizzando la pagina numero: "+currentPage);
+//		System.out.println("sto analizzando la page numero: "+jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("opensearch:startIndex"));
+//		JsonElement pages = jsonElement.getAsJsonObject().get("search-results").getAsJsonObject().get("entry").getAsJsonArray();
+//		String scopus_id = null;
+//		for(JsonElement elem : pages.getAsJsonArray()){
+//			scopus_id = elem.getAsJsonObject().get("dc:identifier").getAsString();
+//			scopus_id = scopus_id.substring(10, scopus_id.length());
+//			System.out.println(scopus_id);
+//			if(result.contains(scopus_id)){
+//				System.out.println("presente");
+//			};
+//			result.add(scopus_id);
+//		}
+//		return (Integer) currentPage;
+//	}
 }

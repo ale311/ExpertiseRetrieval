@@ -1,4 +1,4 @@
-package authorExtraction;
+package authorOperations;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

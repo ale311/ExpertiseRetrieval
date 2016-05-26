@@ -17,7 +17,11 @@ import org.neo4j.io.fs.FileUtils;
 import scala.annotation.meta.param;
 
 public class StartGraphDB {
-	private static final String DB_PATH = "util/neo4j-community-2.3.2/data/graph.db";
+	public enum DB_PATH {
+
+	}
+
+	protected static final String DB_PATH = "util/neo4j-community-2.3.2/data/graph.db";
 	
 	
 	public static void main(String[] args) throws IOException {

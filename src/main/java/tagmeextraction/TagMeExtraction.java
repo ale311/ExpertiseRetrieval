@@ -30,7 +30,7 @@ public class TagMeExtraction {
 		for(String s : temp.keySet()){
 			System.out.println(s+ "  "+temp.get(s));
 		}
-	
+
 	}
 
 	@SuppressWarnings("finally")
@@ -71,7 +71,7 @@ public class TagMeExtraction {
 		}
 	}
 
-	
+
 	public static Map<String, String> getDescription(String text){
 		HashMap<String, String> result = new HashMap<>();
 		try {
@@ -88,11 +88,11 @@ public class TagMeExtraction {
 				String title = ele.getAsJsonObject().get("title").toString();
 				title = title.replace(" ", "_");
 				title = title.substring(1, title.length()-1);
-				
+
 				String extr = ele.getAsJsonObject().get("abstract").toString();
 				extr = extr.substring(1, extr.length()-1);
 				result.put(title, extr);
-				
+
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -108,42 +108,28 @@ public class TagMeExtraction {
 		try {
 			String text2 = text.replaceAll("\\W", "+");
 			text2.replace("\\n", "");
-			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key="+key+"&long_text=true&include_categories=true&include_abstract=true");
+			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key="+key+"&long_text=true");
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			request.connect();
 			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
 			//ho ottenuto il JSON, prendo solo l'elemento annotations che contiene tutti i dati di mio interesse
 			JsonElement pages = jsonElement.getAsJsonObject().get("annotations");
 			JsonArray array = pages.getAsJsonArray();
-			for(JsonElement ele : array){
-				String title = ele.getAsJsonObject().get("title").toString();
-				title = title.replace(" ", "_");
-				title = title.substring(1, title.length()-1);
-				HashSet<String> temp = new HashSet<>();
-				JsonElement ar = ele.getAsJsonObject().get("dbpedia_categories");
-				for(JsonElement e : ar.getAsJsonArray()){
-					try {
-						String kw1 = e.getAsString();
-						String rel = RelExtraction.getRelBetweenTags(keyword,kw1);
-						Double drel = Double.valueOf(rel);
-//						System.out.println("fra "+keyword+" e "+RelExtraction.correggiStringa(kw1)+" esiste relazione di: "+drel);
-						result.put(kw1, drel);
-					} catch (Exception e2) {
-						// TODO: handle exception
-					}
+			for(String tag : getCategories(text2).keySet()){
+				try {
+					String kw1 = tag;
+					String rel = RelExtraction.getRelBetweenTags(keyword,kw1);
+					Double drel = Double.valueOf(rel);
+					System.out.println("fra "+keyword+" e "+RelExtraction.correggiStringa(kw1)+" esiste relazione di: "+drel);
+					result.put(kw1, drel);
+				} 
+				catch (Exception e2) {
+					// TODO: handle exception
 				}
-				
-				
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		finally {
-			return result;
+		catch (Exception e){
 		}
-		// TODO Auto-generated method stub
-		
+		return result;
 	}
 }

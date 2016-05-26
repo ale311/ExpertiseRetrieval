@@ -33,7 +33,7 @@ public class LeggiCSV {
 			if (!s.equals("n")) {
 
 //				 nextLine[] is an array of values from the line
-				s = s.substring(14, s.length()-2);
+				s = s.substring(3, s.length());
 
 				System.out.println(s);
 				result.add(s);
