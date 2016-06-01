@@ -54,6 +54,7 @@ public class ScopusExtraction {
 	private static final String HA_TAG = "tag";
 	private static final String HA_CATEGORIA = "categoria";
 	private static final String HA_WP_INTRO = "intro";
+	private static final String CITA = "cita";
 
 	private static final Integer count = 25;
 	private static final Integer start = 0;
@@ -64,7 +65,7 @@ public class ScopusExtraction {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
 		HashMap<String, String> csv = new HashMap<>();
-//		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
 //		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
@@ -98,6 +99,8 @@ public class ScopusExtraction {
 //		for(String extract : result){
 //			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
 //		}
+		System.out.println("analizzo citazioni");
+		LinkCitations.inserisciCitations(graphDb, result, APIKEY, CITA);
 	}
 
 
