@@ -5,6 +5,7 @@ import java.io.IOException;
 import tagmeextraction.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -66,12 +67,26 @@ public class ScopusExtraction {
 		HashSet<String> result = new HashSet<String>();
 		HashMap<String, String> csv = new HashMap<>();
 		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+		HashMap<String, BigDecimal> hitsDocuments = new HashMap<>();
+		HashMap<String, BigDecimal> tempAuthors = new HashMap<>();
+		HashMap<String, HashMap<String, BigDecimal>> hitsAuthors = new HashMap<>();
+		HashMap<String, BigDecimal> prDocuments = new HashMap<>();
+		HashMap<String, HashMap<String, BigDecimal>> prAuthors = new HashMap<>();
 //		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
-		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
+//		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
 //		csv = LeggiCSV.getRelations("util/scopusid-autorid.csv");
-
+		hitsDocuments = LeggiCSV.getScore("util/sortedAuthorityWithError.csv");
+		hitsAuthors = Authors.buildMap(hitsDocuments, APIKEY);
+		LinkAuthors.setScoreAuthors(graphDb, hitsAuthors, APIKEY, "HITS");
+		
+		prDocuments = LeggiCSV.getScore("util/sortedPageRank.csv");
+		prAuthors = Authors.buildMap(prDocuments, APIKEY);
+		LinkAuthors.setScoreAuthors(graphDb, prAuthors, APIKEY, "PAGERANK");
+//		for(String doc : hits.keySet()){
+//			System.out.println(doc + " " + hits.get(doc));
+//		}
 //		for(String source : csv.keySet()){
 //			String target = csv.get(source);
 //			StartGraphDB.insertRelation(graphDb, source, "SCOPUS_ID", target, "AUTHOR_ID", "ha_autore");
@@ -99,8 +114,8 @@ public class ScopusExtraction {
 //		for(String extract : result){
 //			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
 //		}
-		System.out.println("analizzo citazioni");
-		LinkCitations.inserisciCitations(graphDb, result, APIKEY, CITA);
+//		System.out.println("analizzo citazioni");
+//		LinkCitations.inserisciCitations(graphDb, result, APIKEY, CITA);
 	}
 
 

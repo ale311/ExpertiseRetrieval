@@ -4,8 +4,10 @@ package scopusextraction;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.plaf.synth.SynthSpinnerUI;
@@ -19,6 +21,19 @@ import com.google.gson.JsonParser;
 import neo4j.StartGraphDB;
 
 public class LinkAuthors {
+	static void setScoreAuthors (GraphDatabaseService graphDb, HashMap<String, HashMap<String, BigDecimal>> hits, String APIKEY, String tipoLink){
+		for (String scopus_id : hits.keySet()){
+//			scorro i documenti, per ogni documento ho degli autori
+			for(String authorId : hits.get(scopus_id).keySet()){
+				
+				System.out.println("autore "+authorId);
+				System.out.println("documento "+scopus_id);
+				BigDecimal value = hits.get(scopus_id).get(authorId);
+				System.out.println("valore "+value);
+				StartGraphDB.insertRelationProperty(graphDb, scopus_id, "SCOPUS_ID", authorId, "AUTHOR_ID", tipoLink, tipoLink, value.toString());
+			}
+		}
+	}
 	static void inserisciAutori (GraphDatabaseService graphDb, HashSet<String> result, String APIKEY, String TIPOLINK1, String TIPOLINK2) throws IOException {
 		// TODO Auto-generated method stub
 		int i = 0;
@@ -128,5 +143,7 @@ public class LinkAuthors {
 			}
 		}
 	}
+	
 
+	
 }

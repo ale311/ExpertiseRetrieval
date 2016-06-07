@@ -2,8 +2,14 @@ package scopusextraction;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+import org.jfree.data.Values;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -55,6 +61,22 @@ public class LeggiCSV {
 			System.out.println(("target "+t));
 			
 			result.put(s, t);
+		}
+		return result;
+	}
+	
+	static HashMap getScore(String position) throws IOException{
+		HashMap<String, BigDecimal> result = new HashMap<>();
+		Reader in = new FileReader("util/sortedAuthorityWithError.csv");
+		Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
+		for (CSVRecord record : records) {
+		    String columnOne = record.get(0);
+		    String autore = columnOne.substring(3);
+		    String columnTwo = record.get(1);
+		    String auth = columnTwo.replace(",", ".");
+		    Double authority = Double.parseDouble(auth);
+		    BigDecimal a = new BigDecimal(auth);
+		    result.put(autore, a);
 		}
 		return result;
 	}
