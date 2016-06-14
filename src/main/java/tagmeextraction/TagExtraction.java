@@ -13,13 +13,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class TagExtraction {
-	static String key = Util.key;
+	private static String key = Util.getKey();
 	public static Map<String, HashSet<String>> getTags(String text, String scopusId){
 		HashMap<String, HashSet<String>> result = new HashMap<>();
 		try {
 			String text2 = text.replaceAll("\\W", "+");
 			text2.replace("\\n", "");
-			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key="+key+"&long_text=true&include_categories=true&include_abstract=true");
+			URL url = new URL(Util.getUrlTag()+"?text="+text2+"&gcube-token="+key+"&long_text=true&include_categories=true&include_abstract=true");
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			request.connect();
 			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));

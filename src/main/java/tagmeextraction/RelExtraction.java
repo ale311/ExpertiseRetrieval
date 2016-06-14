@@ -14,7 +14,7 @@ import com.google.gson.JsonParser;
 public class RelExtraction {
 	public static void main (String[]x) throws IOException{
 		
-		String s = getRelBetweenTags("nanoindentation", "antibiotics");
+		String s = getRelBetweenTags("nanoindentation", "hardness");
 		System.out.println(s);
 	}
 	
@@ -23,7 +23,7 @@ public class RelExtraction {
 		kw1 = correggiStringa(kw1);
 		kw2 = correggiStringa(kw2);
 		
-		URL url = new URL("http://tagme.di.unipi.it/rel?key=8020b57e2d41b6041c4fd06937acbec7&tt="+kw1+"%20"+kw2);
+		URL url = new URL(Util.getUrlrel()+"?gcube-token="+Util.getKey()+"&tt="+kw1+"%20"+kw2);
 		HttpURLConnection request = (HttpURLConnection) url.openConnection();
 		request.connect();
 		HashSet<String> result = new HashSet<String>();

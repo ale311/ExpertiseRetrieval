@@ -66,7 +66,7 @@ public class ScopusExtraction {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
 		HashMap<String, String> csv = new HashMap<>();
-		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+//		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
 		HashMap<String, BigDecimal> hitsDocuments = new HashMap<>();
 		HashMap<String, BigDecimal> tempAuthors = new HashMap<>();
 		HashMap<String, HashMap<String, BigDecimal>> hitsAuthors = new HashMap<>();
@@ -77,13 +77,19 @@ public class ScopusExtraction {
 		
 //		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
 //		csv = LeggiCSV.getRelations("util/scopusid-autorid.csv");
-		hitsDocuments = LeggiCSV.getScore("util/sortedAuthorityWithError.csv");
-		hitsAuthors = Authors.buildMap(hitsDocuments, APIKEY);
-		LinkAuthors.setScoreAuthors(graphDb, hitsAuthors, APIKEY, "HITS");
-		
-		prDocuments = LeggiCSV.getScore("util/sortedPageRank.csv");
-		prAuthors = Authors.buildMap(prDocuments, APIKEY);
-		LinkAuthors.setScoreAuthors(graphDb, prAuthors, APIKEY, "PAGERANK");
+//		hitsDocuments = LeggiCSV.getScore("util/sortedAuthorityWithError.csv");
+		hitsDocuments = LeggiCSV.getScorePresent("util/author-hits.csv");
+		ScriviCSV.writeMapCSV(hitsDocuments, "/util/testExportMap.csv");
+//		for(String s : hitsDocuments.keySet()){
+//			System.out.println(s);
+//			System.out.println(hitsDocuments.get(s));
+//		}
+//		hitsAuthors = Authors.buildMap(hitsDocuments, APIKEY);
+//		LinkAuthors.setScoreAuthors(graphDb, hitsAuthors, APIKEY, "HITS");
+//		
+//		prDocuments = LeggiCSV.getScore("util/sortedPageRank.csv");
+//		prAuthors = Authors.buildMap(prDocuments, APIKEY);
+//		LinkAuthors.setScoreAuthors(graphDb, prAuthors, APIKEY, "PAGERANK");
 //		for(String doc : hits.keySet()){
 //			System.out.println(doc + " " + hits.get(doc));
 //		}

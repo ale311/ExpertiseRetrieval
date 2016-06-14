@@ -23,14 +23,13 @@ import com.google.gson.JsonParser;
 import scopusextraction.WPCategories;
 
 public class TagMeExtraction {
-	private static final String key = "8020b57e2d41b6041c4fd06937acbec7";
+	private static final String key = Util.getKey();
 	public static void main (String[] args) throws IOException{
-		HashMap<String, Double> temp = getTagWeight("Hardness is a measure of how resistant solid matter is to various kinds of permanent shape change when a compressive force is applied. Some materials, such as metal, are harder than others. Macroscopic hardness is generally characterized by strong intermolecular bonds, but the behavior of solid materials under force is complex; therefore, there are different measurements of hardness: scratch hardness, indentation hardness, and rebound hardness.Hardness is dependent on ductility, elastic stiffness, plasticity, strain, strength, toughness, viscoelasticity, and viscosity.Common examples of hard matter are ceramics, concrete, certain metals, and superhard materials, which can be contrasted with soft matter.", "Nanoindentation");
-		System.out.println(temp.size());
+		HashMap<String, Double> temp = getTagWeight(Util.getSampletext(), "Nanoindentation");
+//		Map<String, HashSet<String>> categorie = getCategories(Util.getSampletext());
 		for(String s : temp.keySet()){
 			System.out.println(s+ "  "+temp.get(s));
 		}
-
 	}
 
 	@SuppressWarnings("finally")
@@ -39,7 +38,9 @@ public class TagMeExtraction {
 		try {
 			String text2 = text.replaceAll("\\W", "+");
 			text2.replace("\\n", "");
-			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key="+key+"&long_text=true&include_categories=true&include_abstract=true");
+			String urlTag = Util.getUrlTag();
+			URL url = new URL(urlTag+"?text="+text2+"&gcube-token="+key+"&include_categories=true&include_abstract=true");
+//			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key="+key+"&long_text=true&include_categories=true&include_abstract=true");
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			request.connect();
 			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
@@ -77,7 +78,7 @@ public class TagMeExtraction {
 		try {
 			String text2 = text.replaceAll("\\W", "+");
 			text2.replace("\\n", "");
-			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key=8020b57e2d41b6041c4fd06937acbec7&long_text=true&include_categories=true&include_abstract=true");
+			URL url = new URL(Util.getUrlTag()+"?text="+text2+"&gcube-token=8020b57e2d41b6041c4fd06937acbec7&long_text=true&include_categories=true&include_abstract=true");
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			request.connect();
 			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
@@ -108,7 +109,7 @@ public class TagMeExtraction {
 		try {
 			String text2 = text.replaceAll("\\W", "+");
 			text2.replace("\\n", "");
-			URL url = new URL("http://tagme.di.unipi.it/tag?text="+text2+"&key="+key+"&long_text=true");
+			URL url = new URL(Util.getUrlTag()+"?text="+text2+"&gcube-token="+key+"&long_text=true");
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			request.connect();
 			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
