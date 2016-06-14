@@ -51,15 +51,10 @@ public class ExtractInfoN4J {
 			Iterator<Node> n_column = res.columnAs( "t" );
 			for ( Node node : IteratorUtil.asIterable( n_column ) )
 			{
-//				Double value = (Double) node.getProperty("r.weight");
 				String property = (String) node.getProperty("TAG");
 				result.add(property);
-//				System.out.println(property);
 			}
-
-//			System.out.println(result.size());
 			return result;
-
 		}
 	}
 }

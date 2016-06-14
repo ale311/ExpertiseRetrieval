@@ -9,15 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.Tag;
-
 import mongodb.InizializeMongoDB;
 import tagmeextraction.TagMeExtraction;
 
@@ -30,9 +27,9 @@ public class AuthorInsert {
 		
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		String lastName = " bemporad";
-		String firstName = "edoardo";
-		String affiliation = "University Roma Tre";
+		String lastName = " oliver";
+		String firstName = "warren c";
+		String affiliation = "Nanomechanics Inc.";
 		HashSet<Author> possibileAuthors = SearchAuthorIdByName.searchIDbyName(lastName, firstName,affiliation, APIKEY);
 		HashMap<String, String> textByScopusId = new HashMap<>();
 		HashMap<String, HashMap<String, Double>> tagWeightByScopusId = new HashMap<>();
@@ -41,7 +38,6 @@ public class AuthorInsert {
 		
 		DBCollection coll = InizializeMongoDB.buildDb();
 		
-		
 		BasicDBObject mdbauthor = new BasicDBObject("_id", a.authorID)
 				.append("authorId", a.authorID)
 				.append("authorSurname", a.getSurname())
@@ -49,10 +45,8 @@ public class AuthorInsert {
 				.append("affiliation", new BasicDBObject("affiliationId", a.getAffiliation())
 						.append("affiliationName", a.getAffiliation_name()));
 
-		//		System.out.println(a.getAuthorID());
 		Set<String> insiemeDocumenti = DocumentsByAuthorId.getJsonDocument(a.getAuthorID(), APIKEY);
 		textByScopusId = (HashMap<String, String>) TagWeight.getTextByScopusId(insiemeDocumenti,textByScopusId, APIKEY);
-		
 		
 		tagWeightByScopusId = (HashMap<String, HashMap<String, Double>>) TagWeight.getTagWeightByScopusId(textByScopusId, tagWeightByScopusId, KEYWORD);
 		BasicDBObject d2 = new BasicDBObject();

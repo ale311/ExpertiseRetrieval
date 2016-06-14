@@ -30,14 +30,12 @@ public class authorEvaluation {
 		return result;
 	}
 	
-	
 	private static double calcolaCoOccurrency(HashSet<String> keywordsCA, HashSet<String> keywordsKA) {
 		// TODO Auto-generated method stub
 		HashSet<String> temp = new HashSet<>();
 		for(String s : keywordsCA){
 			if(keywordsKA.contains(s)){
 				temp.add(s);
-//				System.out.println(s);
 			}
 		}
 		double dimCAKA = temp.size();
