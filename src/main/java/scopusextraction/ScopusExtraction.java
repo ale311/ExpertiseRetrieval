@@ -68,20 +68,23 @@ public class ScopusExtraction {
 		Integer currentPage = 0;
 		HashSet<String> result = new HashSet<String>();
 		HashMap<String, String> csv = new HashMap<>();
+		
 		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+		
+//		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
+		
 		HashMap<String, BigDecimal> hitsDocuments = new HashMap<>();
 		HashMap<String, BigDecimal> tempAuthors = new HashMap<>();
 		HashMap<String, HashMap<String, BigDecimal>> hitsAuthors = new HashMap<>();
 		HashMap<String, BigDecimal> prDocuments = new HashMap<>();
 		HashMap<String, HashMap<String, BigDecimal>> prAuthors = new HashMap<>();
-//		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 //		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
-//		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
+		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
 //		csv = LeggiCSV.getRelations("util/scopusid-autorid.csv");
 //		hitsDocuments = LeggiCSV.getScore("util/sortedAuthorityWithError.csv");
-		hitsDocuments = LeggiCSV.getScorePresent("util/author-hits.csv");
-		ScriviCSV.writeMapCSV(hitsDocuments, "/util/testExportMap.csv");
+//		hitsDocuments = LeggiCSV.getScorePresent("util/author-hits.csv");
+//		ScriviCSV.writeMapCSV(hitsDocuments, "/util/testExportMap.csv");
 //		for(String s : hitsDocuments.keySet()){
 //			System.out.println(s);
 //			System.out.println(hitsDocuments.get(s));
@@ -123,7 +126,7 @@ public class ScopusExtraction {
 //			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
 //		}
 		
-//		LinkYearOfPublication.inserisciYearOfPublication(graphDb, result, APIKEY, HA_ANNO_DI_PUBBLICAZIONE);
+		LinkYearOfPublication.inserisciYearOfPublication(graphDb, result, APIKEY, HA_ANNO_DI_PUBBLICAZIONE);
 		LinkNumberOfPages.inserisciNumberOfPages(graphDb, result, APIKEY, HA_NUMERO_PAGINE);
 //		System.out.println("analizzo citazioni");
 //		LinkCitations.inserisciCitations(graphDb, result, APIKEY, CITA);

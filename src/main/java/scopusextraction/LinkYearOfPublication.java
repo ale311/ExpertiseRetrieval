@@ -44,13 +44,13 @@ public class LinkYearOfPublication {
 						try {
 
 							Date date = formatter.parse(dateInString);
-							System.out.println(formatter.format(date));
+//							System.out.println(formatter.format(date));
 							Calendar c = Calendar.getInstance();
 							c.setTime(date);
 							int year = c.get(Calendar.YEAR);
 							String s_year = Integer.toString(year);
 							System.out.println(s_year);
-//							StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", s_year, "YEAR_OF_PUBLICATION", TIPOLINK);
+							StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", s_year, "ANNO_PUBBLICAZIONE", TIPOLINK);
 
 						} catch (ParseException e) {
 							e.printStackTrace();

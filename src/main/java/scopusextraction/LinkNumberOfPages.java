@@ -49,7 +49,7 @@ public class LinkNumberOfPages {
 							int totalPages = endPage-startPage;
 							String s_totalPages = Integer.toString(totalPages);
 							System.out.println(s_totalPages);
-							StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", s_totalPages, "NUMBER_OF_PAGES", TIPOLINK);
+							StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", s_totalPages, "NUMERO_PAGINE", TIPOLINK);
 
 						} catch (Exception e) {
 							// TODO: handle exception
