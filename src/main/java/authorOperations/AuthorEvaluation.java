@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import neo4j.*;
 
-public class authorEvaluation {
+public class AuthorEvaluation {
 	public static void main (String [] args){
 		getScoreWithPresence("6603406713");
 		getScoreWithWeight("6603406713");

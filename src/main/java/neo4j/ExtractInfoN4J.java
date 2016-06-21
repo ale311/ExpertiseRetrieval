@@ -19,7 +19,7 @@ import org.neo4j.logging.Log;
 import org.neo4j.logging.LogProvider;
 
 import authorOperations.LogProviderSetup;
-import authorOperations.authorEvaluation;
+import authorOperations.AuthorEvaluation;
 
 
 public class ExtractInfoN4J {
