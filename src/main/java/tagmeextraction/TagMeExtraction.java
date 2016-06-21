@@ -133,4 +133,48 @@ public class TagMeExtraction {
 		}
 		return result;
 	}
+	
+	
+	public static HashMap<String, Integer> getOccurrence(String text){
+		HashMap<String, Integer> result = new HashMap<>();
+		String key = Util.getKey();
+		try {
+			String text2 = text.replaceAll("\\W", "+");
+			text2.replace("\\n", "");
+			URL url = new URL(Util.getUrlTag()+"?text="+text2+"&gcube-token="+key+"&long_text=true");
+			System.out.println(url);
+			HttpURLConnection request = (HttpURLConnection) url.openConnection();
+			request.connect();
+			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+			//ho ottenuto il JSON, prendo solo l'elemento annotations che contiene tutti i dati di mio interesse
+			JsonElement pages = jsonElement.getAsJsonObject().get("annotations");
+			System.out.println(pages);
+			JsonArray array = pages.getAsJsonArray();
+			System.out.println(array);
+			for(JsonElement ele : array){
+				String title = ele.getAsJsonObject().get("title").toString();
+				System.out.println(title);
+				title = title.replace(" ", "_");
+				title = title.substring(1, title.length()-1);
+
+				System.out.println(title);
+//				controllo l'esistenza dello stesso tag all'interno della mappa 
+//				if(result.containsKey(title)){
+//					int valoreCorrente = result.get(title);
+//					int nuovoValore = valoreCorrente + 1;
+//					result.put(title, nuovoValore);
+//				}
+//				else{
+//					result.put(title, 1);
+//				}
+
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			return result;
+		}
+	}
 }

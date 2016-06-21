@@ -26,40 +26,34 @@ public class LinkYearOfPublication {
 				i++;
 				System.out.println(scopus_id);
 				System.out.println(i);
-				URL url = new URL("http://api.elsevier.com/content/abstract/scopus_id/"+scopus_id+"?apiKey="+APIKEY+"&httpAccept=application/json&field=prism:coverDate");
+				URL url = new URL("http://api.elsevier.com/content/abstract/scopus_id/"+scopus_id+"?apiKey="+APIKEY+"&httpAccept=application/json");
 				HttpURLConnection request = (HttpURLConnection) url.openConnection();
 				request.connect();
 				JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+				System.out.println(jsonElement);
 				if (jsonElement!=null) {
 					try {
 						JsonElement jsone = jsonElement.getAsJsonObject()
 								.get("abstracts-retrieval-response").getAsJsonObject()
 								.get("coredata").getAsJsonObject()
 								.get("prism:coverDate");
+						
 						String dateOfPublication = jsone.toString();
+						System.out.println(dateOfPublication);
 						dateOfPublication = dateOfPublication.substring(1, dateOfPublication.length()-1);
 						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 						String dateInString = dateOfPublication;
-
-						try {
-
-							Date date = formatter.parse(dateInString);
-//							System.out.println(formatter.format(date));
-							Calendar c = Calendar.getInstance();
-							c.setTime(date);
-							int year = c.get(Calendar.YEAR);
-							String s_year = Integer.toString(year);
-							System.out.println(s_year);
-							StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", s_year, "ANNO_PUBBLICAZIONE", TIPOLINK);
-
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
-
-					    
-
+						Date date = formatter.parse(dateInString);
+						//							System.out.println(formatter.format(date));
+						Calendar c = Calendar.getInstance();
+						c.setTime(date);
+						int year = c.get(Calendar.YEAR);
+						String s_year = Integer.toString(year);
+						System.out.println("anno di pubblicazione: "+s_year);
+						StartGraphDB.insertRelation(graphDb, scopus_id, "SCOPUS_ID", s_year, "ANNO_PUBBLICAZIONE", TIPOLINK);
 					} catch (Exception e) {
 						// TODO: handle exception
+						System.out.println("errore nel try interno " +e);
 					}
 				}
 //				System.out.println(i);
@@ -67,7 +61,7 @@ public class LinkYearOfPublication {
 
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println(e);
+			System.out.println("errore nel try esterno "+e);
 		}
 	}
 }

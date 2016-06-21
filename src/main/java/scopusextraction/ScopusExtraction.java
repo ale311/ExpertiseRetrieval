@@ -31,10 +31,10 @@ import neo4j.StartGraphDB;
 import scala.util.parsing.json.JSONObject;
 public class ScopusExtraction {
 //	private final static String APIKEY = "703fc00b8c3e5217790b6f7c98759d02";
-	private final static String APIKEY = "b83798f2bae2c7a72f9a4474a5b7293f";
+//	private final static String APIKEY = "b83798f2bae2c7a72f9a4474a5b7293f";
 //	private final static String APIKEY = "0d63be8ff78f8c7127fd35d77a502294";
 //	private final static String APIKEY = "544c126025d93754f02fe6615f634c27";
-//	private final static String APIKEY = "b61139dd20be6485a3f9332b01ccfd95";
+	private final static String APIKEY = "b61139dd20be6485a3f9332b01ccfd95";
 	
 
 	
@@ -69,7 +69,7 @@ public class ScopusExtraction {
 		HashSet<String> result = new HashSet<String>();
 		HashMap<String, String> csv = new HashMap<>();
 		
-		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
+//		GraphDatabaseService graphDb = neo4j.StartGraphDB.costruisciGrafo();
 		
 //		GraphDatabaseService graphDb = neo4j.StartGraphDB.formattaGrafo();
 		
@@ -78,9 +78,12 @@ public class ScopusExtraction {
 		HashMap<String, HashMap<String, BigDecimal>> hitsAuthors = new HashMap<>();
 		HashMap<String, BigDecimal> prDocuments = new HashMap<>();
 		HashMap<String, HashMap<String, BigDecimal>> prAuthors = new HashMap<>();
+		HashMap<String, HashMap<String, Integer>> occurrenceTag = new HashMap<>();
+		
 //		result = LeggiCSV.getAbstractCSV("util/abstract.csv");
 		
-		result = LeggiCSV.getScopusIDCSV("util/listaScopusId.csv");
+//		occurrenceTag = LeggiCSV.getAbstractAndTag("util/doc-abs-tag-weight.csv");
+//		result = LeggiCSV.getScopusIDCSV("util/listaScopusIdNEW.csv");
 //		csv = LeggiCSV.getRelations("util/scopusid-autorid.csv");
 //		hitsDocuments = LeggiCSV.getScore("util/sortedAuthorityWithError.csv");
 //		hitsDocuments = LeggiCSV.getScorePresent("util/author-hits.csv");
@@ -126,8 +129,8 @@ public class ScopusExtraction {
 //			LinkTag.inserisciTagDaAbstract(graphDb, extract, HA_TAG, HA_CATEGORIA, HA_WP_INTRO);
 //		}
 		
-		LinkYearOfPublication.inserisciYearOfPublication(graphDb, result, APIKEY, HA_ANNO_DI_PUBBLICAZIONE);
-		LinkNumberOfPages.inserisciNumberOfPages(graphDb, result, APIKEY, HA_NUMERO_PAGINE);
+//		LinkYearOfPublication.inserisciYearOfPublication(graphDb, result, APIKEY, HA_ANNO_DI_PUBBLICAZIONE);
+//		LinkNumberOfPages.inserisciNumberOfPages(graphDb, result, APIKEY, HA_NUMERO_PAGINE);
 //		System.out.println("analizzo citazioni");
 //		LinkCitations.inserisciCitations(graphDb, result, APIKEY, CITA);
 	}

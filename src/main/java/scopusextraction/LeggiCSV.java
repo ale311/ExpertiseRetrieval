@@ -1,19 +1,26 @@
 package scopusextraction;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.jfree.data.Values;
 
+import com.itextpdf.text.log.SysoLogger;
+
 import au.com.bytecode.opencsv.CSVReader;
+import tagmeextraction.TagExtraction;
+import tagmeextraction.TagMeExtraction;
 
 public class LeggiCSV {
+	private static HashMap<String, Integer> put;
 	static HashSet<String> getAbstractCSV(String position) throws IOException{
 		HashSet<String> result = new HashSet<String>();
 		CSVReader reader = new CSVReader(new FileReader(position));
@@ -105,6 +112,28 @@ public class LeggiCSV {
 		    	result.put(autore, a);
 		    }
 		}
+		return result;
+	}
+	public static HashMap<String, HashMap<String, Integer>> getAbstractAndTag(String string) throws IOException {
+		// TODO Auto-generated method stub
+		HashMap<String, HashMap<String, Integer>> result = new HashMap<>();
+		// RESULT è la mappa contenente gli scopus_id, con la mappa interna che rappresenta il tag e il numero di volte che compare
+		
+		HashMap<String, Integer> occorrenze = new HashMap<>();
+		Reader in = new FileReader("util/doc-abs-tag-weight.csv");
+		Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
+		for (CSVRecord record : records) {
+		    String columnOne = record.get(0);
+		    String scopusid = columnOne.substring(3);
+		    String columnTwo = record.get(1);
+		    String abs = columnTwo.substring(0);
+		    String columnThree = record.get(2);
+		    String tag = columnThree.substring(0);
+		    occorrenze = TagMeExtraction.getOccurrence(abs);
+		    result.put(scopusid, occorrenze);
+		    System.out.println(scopusid);
+		}
+		System.out.println(result);
 		return result;
 	}
 }

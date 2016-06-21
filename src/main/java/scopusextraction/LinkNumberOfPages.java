@@ -30,6 +30,7 @@ public class LinkNumberOfPages {
 					HttpURLConnection request = (HttpURLConnection) url.openConnection();
 					request.connect();
 					JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+					System.out.println(jsonElement);
 					if (jsonElement!=null) {
 						try {
 							JsonElement jsonStartingPage = jsonElement.getAsJsonObject()
