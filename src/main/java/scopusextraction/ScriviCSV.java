@@ -23,7 +23,7 @@ public class ScriviCSV {
 		// feed in your array (or convert your data to an array)
 		List<String> temp = new ArrayList<String>();
 		for(String s : result){
-			temp.add(s);
+			temp.add("a: "+s);
 		}
 		String[] entries =  new String[temp.size()];
 

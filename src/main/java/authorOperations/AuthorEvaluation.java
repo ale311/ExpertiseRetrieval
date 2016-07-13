@@ -2,14 +2,33 @@ package authorOperations;
 
 import java.util.HashMap;
 import java.util.HashSet;
+
+import org.neo4j.cypher.internal.compiler.v1_9.symbols.IntegerType;
+
+import mongodb.TagCount;
 import neo4j.*;
+import scopusextraction.LeggiCSV;
 
 public class AuthorEvaluation {
 	public static void main (String [] args){
-		getScoreWithPresence("6603406713");
-		getScoreWithWeight("6603406713");
+//		getScoreWithPresence("6603406713");
+//		getScoreWithWeight("6603406713");
+//		HashMap<String, Double> arrayExpert = getEntityFrequency("6603406713");
+		HashMap<String, Double> arrayKA = getArrayKA();
+		
+//		System.out.println(ExtractInfoN4J.getDocumentsNumber());
 	}
 	
+	private static HashMap<String, Double> getArrayKA() {
+		// TODO Auto-generated method stub
+		HashMap<String, Double> result = new HashMap<>();
+		HashMap<String, Integer> temp = neo4j.TagCount.getRelativeTag("util/tagCount.csv");
+		for(String s : temp.keySet()){
+			result.put(s, new Double(temp.get(s)));
+		}
+		return result;
+	}
+
 	private static double getScoreWithPresence(String author){
 		double result = 0;
 		HashSet<String> keywordsKA;
@@ -73,4 +92,23 @@ public class AuthorEvaluation {
 		}
 		return result;
 	}
+	
+	private static HashMap<String, Double> getEntityFrequency(String authorId){
+		HashMap<String, Double> result = new HashMap<>();
+		int inttagCount = TagCount.docCount(authorId);
+		double tagCount = (double) inttagCount;
+		HashMap<String, Integer> occorrenze = TagCount.tagCount(authorId);
+		for(String s : occorrenze.keySet()){
+//			System.out.println(s);
+//			System.out.println(occorrenze.get(s));
+			result.put(s, (double) (occorrenze.get(s)/tagCount));
+		}
+//		for(String s : result.keySet()){
+//			System.out.println(s);
+//			System.out.println(result.get(s));
+//		}
+		return result;
+	}
+	
+//	private static double getCosineSimilarity()
 }

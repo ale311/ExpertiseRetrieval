@@ -20,14 +20,17 @@ import com.mongodb.MongoClient;
 public class TagCount {
 	public static void main(String[] x){
 		final String authorId = "6603406713";
-//		HashMap<String, Integer> tagCount = tagCount(authorId);
+		HashMap<String, Integer> tagCount = tagCount(authorId);
 		int docCount = docCount(authorId);
-//		int allTagCount = allTagCount(authorId);
+		int allTagCount = allTagCount(authorId);
 		System.out.println(docCount);
 		
 //		for(String s : result.keySet()){
 //			System.out.println(s+" : "+result.get(s));
 //		}
+		for(String s: tagCount.keySet()){
+			System.out.println(s + " " + tagCount.get(s));
+		}
 	}
 	
 	public static int docCount (String authorId){

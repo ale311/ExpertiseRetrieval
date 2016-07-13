@@ -57,4 +57,21 @@ public class ExtractInfoN4J {
 			return result;
 		}
 	}
+	
+	public static int getDocumentsNumber(){
+//		try ( Transaction ignored = db.beginTx();
+//				Result res = db.execute("match(n:TAG)-[r]-(a:ABSTRACT)-[r1]-(s:SCOPUS_ID) where r.weight>0  return  count(distinct r1) as t" ) )
+//		{
+//			Iterator<Node> n_column = res.columnAs( "t" );
+//			System.out.println();
+//			int result = 0;
+//			for ( Node node : IteratorUtil.asIterable( n_column ) )
+//			{
+//				System.out.println(node);
+//				String property = (String) node.getProperty("t");
+//				result  = Integer.parseInt(property);
+//			}
+			return 1699;
+//		}
+	}
 }

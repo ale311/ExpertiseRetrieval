@@ -21,7 +21,7 @@ import tagmeextraction.TagMeExtraction;
 
 public class LeggiCSV {
 	private static HashMap<String, Integer> put;
-	static HashSet<String> getAbstractCSV(String position) throws IOException{
+	public static HashSet<String> getAbstractCSV(String position) throws IOException{
 		HashSet<String> result = new HashSet<String>();
 		CSVReader reader = new CSVReader(new FileReader(position));
 		String [] nextLine;
@@ -29,7 +29,7 @@ public class LeggiCSV {
 			String s = nextLine[0];
 			if (!s.equals("n")) {
 				// nextLine[] is an array of values from the line
-				s = s.substring(13, s.length()-2);
+//				s = s.substring(13, s.length()-2);
 
 				//			System.out.println(s);
 				result.add(s);
@@ -37,6 +37,29 @@ public class LeggiCSV {
 		}
 		return result;
 	}
+	
+	public static HashMap<String, Integer> getCountCSV(String position) throws IOException{
+		HashMap<String, Integer> result = new HashMap<>();
+		CSVReader reader = new CSVReader(new FileReader(position));
+		String [] nextLine;
+		while ((nextLine = reader.readNext()) != null) {
+			String s = nextLine[0];
+				Integer t = Integer.parseInt(nextLine [1]);
+//				System.out.println("source "+s);
+//				System.out.println(("target "+t));
+				
+				result.put(s, t);
+				// nextLine[] is an array of values from the line
+//				s = s.substring(13, s.length()-2);
+
+				//			System.out.println(s);
+				
+			}
+		
+		return result;
+	}
+	
+	
 	static HashSet<String> getScopusIDCSV(String position) throws IOException{
 		HashSet<String> result = new HashSet<String>();
 		CSVReader reader = new CSVReader(new FileReader(position));

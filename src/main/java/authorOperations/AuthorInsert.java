@@ -27,9 +27,9 @@ public class AuthorInsert {
 		
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		String lastName = " oliver";
-		String firstName = "warren c";
-		String affiliation = "Nanomechanics Inc.";
+		String lastName = "cingolani";
+		String firstName = "davide";
+		String affiliation = "Universita degli Studi di Roma La Sapienza";
 		HashSet<Author> possibileAuthors = SearchAuthorIdByName.searchIDbyName(lastName, firstName,affiliation, APIKEY);
 		HashMap<String, String> textByScopusId = new HashMap<>();
 		HashMap<String, HashMap<String, Double>> tagWeightByScopusId = new HashMap<>();

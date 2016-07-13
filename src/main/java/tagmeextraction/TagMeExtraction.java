@@ -78,7 +78,7 @@ public class TagMeExtraction {
 		try {
 			String text2 = text.replaceAll("\\W", "+");
 			text2.replace("\\n", "");
-			URL url = new URL(Util.getUrlTag()+"?text="+text2+"&gcube-token=8020b57e2d41b6041c4fd06937acbec7&long_text=true&include_categories=true&include_abstract=true");
+			URL url = new URL(Util.getUrlTag()+"?text="+text2+"&gcube-token="+key+"&long_text=true&include_categories=true&include_abstract=true");
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			request.connect();
 			JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
